@@ -1,0 +1,36 @@
+@font-face {
+  font-family: "mangat";
+  src: url(../assets/font/mangat.ttf);
+}
+@font-face {
+  font-family: "zombie";
+  src: url(../assets/font/Zombie\ Queen.ttf);
+}
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-block: 50px;
+}
+
+#start-screen > h1 {
+  font-family: "mangat";
+  font-size: 5rem;
+  font-weight: bold;
+}
+#start-screen > img {
+  width: 200px;
+}
+#typewriter {
+  font-family: "zombie";
+  font-size: 3rem;
+  border-right: 2px solid black;
+}
+#start-btn {
+  font-family: "mangat";
+  font-size: 2rem;
+  background-color: brown;
+  padding: 15px 40px;
+  border-radius: 50px;
+}

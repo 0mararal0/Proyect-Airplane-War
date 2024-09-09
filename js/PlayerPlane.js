@@ -1,0 +1,3 @@
+class PlayerPlane {
+  constructor() {}
+}
