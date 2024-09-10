@@ -1,10 +1,11 @@
 class PlayerPlane {
-  constructor() {
+  constructor(positionPlayerX, positionPlayerY, playerH, playerW) {
     //valores generales
-    this.x = 50;
-    this.y = 300;
-    this.h = 35;
-    this.w = 40;
+    this.x = positionPlayerX;
+    this.y = positionPlayerY;
+    this.h = playerH;
+    this.w = playerW;
+    this.speed = 5;
 
     //Avion en el DOM
     this.node = document.createElement("img");
@@ -21,11 +22,11 @@ class PlayerPlane {
   }
 
   up() {
-    this.y--;
+    this.y = this.y - this.speed;
     this.node.style.top = `${this.y}px`;
   }
   down() {
-    this.y++;
+    this.y = this.y + this.speed;
     this.node.style.top = `${this.y}px`;
   }
 }
