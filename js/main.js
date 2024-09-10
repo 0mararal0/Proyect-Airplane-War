@@ -4,7 +4,6 @@ const startScreenNode = document.querySelector("#start-screen");
 const gameScreenNode = document.querySelector("#game-screen");
 const gameOverScreenNode = document.querySelector("#game-over-screen");
 const gameBoxNode = document.querySelector("#game-box");
-
 //botones
 const startBtnNode = document.querySelector("#start-btn");
 const restartGame = document.querySelector("#restart-game");
@@ -20,6 +19,8 @@ let fireH = 35;
 let fireW = 40;
 let positionPlayerX = 50;
 let positionPlayerY = 300;
+let enemyPlaneArr = [];
+let hiScore = "0000";
 const typewriter = document.getElementById("typewriter");
 
 /* ··········Funciones globales del juego·········· */
@@ -38,6 +39,7 @@ const textTypewriter = (text = "", time = 200) => {
 };
 // console.log(textTypewriter("lorewknfep dopen poedn", 300));
 
+//Función principal
 function startGame() {
   //actualizar pantallas
   startScreenNode.style.display = "none";
@@ -51,18 +53,31 @@ function startGame() {
   gameIntervalId = setInterval(() => {
     gameLoop();
   }, Math.round(1000 / 60));
+  enemyPlaneIntervalId = setInterval(() => {
+    addEnemyPlane();
+  }, 1000);
 }
+
+//función bucle
 function gameLoop() {
   fireArr.forEach((elem) => {
     elem.fire();
   });
+  enemyPlaneArr.forEach((elem) => {
+    elem.automaticMovement();
+  });
   outFire();
+  outEnemyPlane();
+  detectFire();
 }
+
+//añadimos disparos
 function addFire() {
   firePlayer = new FirePlayer(fireH, fireW, playerW);
   fireArr.push(firePlayer);
-  console.log("hola", fireArr);
 }
+
+// eliminamos disparos en Dom y en js
 function outFire() {
   if (fireArr.length === 0) {
     return;
@@ -72,25 +87,57 @@ function outFire() {
     fireArr.splice(0, 1);
   }
 }
-/* function moveFires() {
-  for (let i in playerFires) {
-    fire = playerFires[i];
-    fire.x -= 2;
+//añadimos aviones enemigos
+function addEnemyPlane() {
+  let randomPositionY = Math.floor(Math.random() * 600);
+  let newPlane = new EnemyPlane(randomPositionY);
+  enemyPlaneArr.push(newPlane);
+}
+//eliminamos aviones enemigos en DOM y en js
+function outEnemyPlane() {
+  if (enemyPlaneArr.length === 0) {
+    return;
+  }
+  if (enemyPlaneArr[0].x < 0 - enemyPlaneArr[0].w) {
+    enemyPlaneArr[0].node.remove();
+    enemyPlaneArr.splice(0, 1);
   }
 }
-function fireObj() {
-  playerFires.push({
-    x: player.x + 20,
-    y: player.y - 10,
-    with: 10,
-    height: 30,
+
+//detectamos disparos en avones enemigos y los borramos del DOM
+function detectFire() {
+  enemyPlaneArr.forEach((elem) => {
+    if (
+      fireArr[0].x < elem.x + elem.w &&
+      fireArr[0].x + fireArr[0].w > elem.x &&
+      fireArr[0].y < elem.y + elem.h &&
+      fireArr[0].y + fireArr[0].h > elem.y
+    ) {
+      elem.node.remove();
+      fireArr[0].node.remove();
+      fireArr.splice(0, 1);
+      count();
+    }
   });
+
+  //añadimos puntuacion al contador por cada avion enemigo eliminado
+  function count() {
+    hiScore = hiScore * 50;
+    const hiScoreValue = document.getElementById("hiScoreValue");
+    hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
+    console.log(hiScore);
+  }
 }
-function printFire() {
-  let node = document.createElement("div");
-  gameBoxNode.append(node);
+
+//fin del juego reiniciamos pantallas
+function gameOver() {
+  clearInterval(gameIntervalId);
+  clearInterval(enemyPlaneIntervalId);
+  gameOverScreenNode.style.display = "flex";
+  startScreenNode.style.display = "none";
+  gameBoxNode.style.display = "none";
 }
- */
+
 /* ··········Event Listeners·········· */
 startBtnNode.addEventListener("click", startGame);
 window.addEventListener("keydown", (event) => {

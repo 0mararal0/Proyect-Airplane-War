@@ -1,5 +1,5 @@
 class FirePlayer {
-  constructor(positionPlayerX, positionPlayerY, fireH, fireW, playerW) {
+  constructor(fireH, fireW, playerW) {
     //valores generales
     this.x = player.x + playerW;
     this.y = player.y;

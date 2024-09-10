@@ -50,6 +50,7 @@
   height: 600px;
   position: relative;
   user-select: none;
+  overflow: hidden;
 }
 #game-box * {
   pointer-events: none;
