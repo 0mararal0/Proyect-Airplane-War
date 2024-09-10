@@ -6,7 +6,8 @@
   font-family: "zombie";
   src: url(../assets/font/Zombie\ Queen.ttf);
 }
-#start-screen {
+#start-screen,
+#game-screen {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,9 +29,35 @@
   border-right: 2px solid black;
 }
 #start-btn {
-  font-family: "mangat";
+  font-family: "zombie";
   font-size: 2rem;
   background-color: brown;
   padding: 15px 40px;
   border-radius: 50px;
+}
+#restart-game-btn {
+  font-family: "zombie";
+  font-size: 2rem;
+  background-color: brown;
+  padding: 15px 40px;
+  border-radius: 50px;
+}
+#game-box {
+  background-image: url(../images/grass-land-grass-draw-with-summer-blue-sky-background-free-vector.jpg);
+  background-position: center;
+  background-size: cover;
+  width: 900px;
+  height: 600px;
+  position: relative;
+  user-select: none;
+}
+#game-box * {
+  pointer-events: none;
+}
+#game-screen,
+#game-over-screen {
+  display: none;
+}
+#marker {
+  display: flex;
 }
