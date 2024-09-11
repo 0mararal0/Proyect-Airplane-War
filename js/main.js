@@ -4,10 +4,15 @@ const startScreenNode = document.querySelector("#start-screen");
 const gameScreenNode = document.querySelector("#game-screen");
 const gameOverScreenNode = document.querySelector("#game-over-screen");
 const gameBoxNode = document.querySelector("#game-box");
+const textGameOverNode = document.querySelector("#textGameOver");
+const hiScoreListNode = document.querySelector("#hiScoreList");
 const hiScorePoint = document.querySelector("#hiScorePoint");
+const yourScore = document.querySelector("#your-score");
 //botones
 const startBtnNode = document.querySelector("#start-btn");
-const restartGame = document.querySelector("#restart-game-btn");
+const hiScoreBtnNode = document.querySelector("#hiScore-btn");
+const restartGameNode = document.querySelector("#restart-game-btn");
+const returnGameNode = document.querySelector("#return-game-btn");
 
 /* ··········Variables globales del juego·········· */
 //declaramos player-declaramos disparo-parametros comunes
@@ -23,10 +28,9 @@ let positionPlayerY = 300;
 let enemyPlaneArr = [];
 let hiScore = "0000";
 let local = JSON.parse(localStorage.getItem("HiScore"));
-console.log(local);
-
-let hiScoreArr = local;
-let timeRemaining = 20;
+let hiScoreArr = local ? local : [];
+let resulthiScore = [];
+let timeRemaining = 30;
 const typewriter = document.getElementById("typewriter");
 
 /* ··········Funciones globales del juego·········· */
@@ -54,6 +58,7 @@ function startGame() {
   startScreenNode.style.display = "none";
   gameScreenNode.style.display = "flex";
   gameOverScreenNode.style.display = "none";
+  returnGameNode.style.display = "none";
 
   // añadir elementos al juego
   player = new PlayerPlane(positionPlayerX, positionPlayerY, playerH, playerW);
@@ -182,7 +187,7 @@ function detectCollisionPlayer() {
       enemyPlaneArr[indexEnemyPlane].node.remove();
       enemyPlaneArr.splice(indexEnemyPlane, 1);
       hiScoreArr.push(hiScore);
-      localStorage.setItem("HiScore", JSON.stringify(hiScoreArr));
+      showHiScore();
       gameOver();
     }
   });
@@ -190,24 +195,57 @@ function detectCollisionPlayer() {
 
 //fin del juego reiniciamos pantallas
 function gameOver() {
-  console.log(hiScoreArr);
-
   clearInterval(gameIntervalId);
   clearInterval(enemyPlaneIntervalId);
   gameOverScreenNode.style.display = "flex";
   gameScreenNode.style.display = "none";
   gameBoxNode.style.display = "none";
-  hiScoreArr.forEach((elem) => {
-    let hiScoreNode = document.createElement("p");
-    hiScoreNode.innerHTML = elem;
-    hiScorePoint.append(hiScoreNode);
-    console.log(elem);
-  });
 }
+//guardamos la puntuacion en el local storage
+function saveLocalStorage() {
+  localStorage.setItem("HiScore", JSON.stringify(hiScoreArr));
+}
+// mostramos los resultados en pantalla
+function showHiScore() {
+  let yourScoreNode = document.createElement("p");
+  yourScoreNode.innerHTML = `YOUR SCORE: ${hiScore}`;
+  yourScore.append(yourScoreNode);
+  hiScoreArr.sort((elem1, elem2) => {
+    if (elem1 < elem2) {
+      return 1;
+    } else if (elem1 > elem2) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
 
+  hiScoreArr.splice(5, 1);
+  console.log(hiScoreArr);
+  hiScoreArr.forEach((elem, index) => {
+    let hiScoreNode = document.createElement("p");
+    hiScoreNode.innerHTML = `${
+      index + 1
+    }. ----------------------------------- ${elem}`;
+    hiScorePoint.append(hiScoreNode);
+  });
+  saveLocalStorage();
+}
+function viewHiScore() {
+  showHiScore();
+  startScreenNode.style.display = "none";
+  textGameOverNode.style.display = "none";
+  restartGameNode.style.display = "none";
+  gameOverScreenNode.style.display = "flex";
+  returnGameNode.style.display = "flex";
+}
 /* ··········Event Listeners·········· */
 startBtnNode.addEventListener("click", startGame);
-restartGame.addEventListener("click", () => {
+hiScoreBtnNode.addEventListener("click", viewHiScore);
+returnGameNode.addEventListener("click", () => {
+  location.reload();
+});
+restartGameNode.addEventListener("click", () => {
   location.reload();
 });
 window.addEventListener("keydown", (event) => {

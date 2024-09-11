@@ -16,7 +16,7 @@
           <p id="typewriter"></p>
         </div>
         <div id="btns">
-          <button id="start-btn">Start</button>
+          <button id="start-btn" autofocus>Start</button>
           <button id="hiScore-btn">Hi-Score</button>
         </div>
       </div>
@@ -24,11 +24,13 @@
     <!-- Pantalla de Juego -->
     <section id="game-screen">
       <div id="marker">
-        <div>
+        <div class="time">
+          <p>TIME:</p>
           <p id="timeRemaining"></p>
         </div>
-        <div>
-          <p>HI-SCORE&nbsp&nbsp&nbsp</p>
+
+        <div class="score">
+          <p>HI-SCORE:</p>
           <p id="hiScoreValue">0000</p>
         </div>
       </div>
@@ -36,8 +38,14 @@
     </section>
     <!-- Pantalla Final -->
     <section id="game-over-screen">
-      <h3>Game Over</h3>
+      <h3 id="textGameOver">Game Over</h3>
+      <div id="hiScoreList">
+        <div id="your-score"></div>
+        <h4>High-Score</h4>
+        <div id="hiScorePoint"></div>
+      </div>
       <button id="restart-game-btn">Reiniciar</button>
+      <button id="return-game-btn">Return</button>
     </section>
 
     <script src="./js/main.js"></script>

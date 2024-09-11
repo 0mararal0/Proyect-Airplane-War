@@ -29,7 +29,7 @@ body {
   border: 1px solid rgb(149, 222, 241);
   border-radius: 50px;
   box-shadow: 0px 0px 50px rgb(149, 222, 241);
-  padding-inline: 150px;
+  padding-inline: 100px;
   background-color: rgba(240, 248, 255, 0.098);
   display: flex;
   flex-direction: column;
@@ -71,7 +71,8 @@ body {
 }
 #start-btn,
 #hiScore-btn,
-#restart-game-btn {
+#restart-game-btn,
+#return-game-btn {
   font-family: "zombie";
 
   background-color: transparent;
@@ -89,6 +90,10 @@ body {
   z-index: 1;
   overflow: hidden;
   transition: color 1s, box-shadow 1s;
+}
+#start-btn:focus {
+  border-color: #0ef;
+  outline: 0 none;
 }
 /* #restart-game-btn {
   font-family: "zombie";
@@ -116,32 +121,73 @@ body {
 }
 #marker {
   display: flex;
-  color: aliceblue;
+  color: rgb(149, 222, 241);
   border: 2px solid rgb(149, 222, 241);
   border-radius: 20px;
-  padding: 5px 10px;
+  padding: 10px 0px;
   margin-bottom: 10px;
   box-shadow: 0px 0px 50px rgb(149, 222, 241);
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
   width: 900px;
+}
+/* #timeRemaining,
+#hiScoreValue {
+  border:2px solid #0ef;
+} */
+#timeRemaining p {
+  margin: 0;
+}
+.score,
+.time {
+  display: flex;
+  gap: 20px;
+  margin-inline: 50px;
+}
+.score > p,
+.time > p {
+  font-family: "zombie";
+  font-size: 3rem;
+  margin-block: 0px;
 }
 #game-over-screen > h3 {
   font-family: "mangat";
 }
 #hiScoreList {
-  width: 900px;
+  width: 600px;
   height: 600px;
 
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: center;
+  gap: 10px;
 }
 #hiScoreList > h4 {
   font-family: "zombie";
   font-size: 4rem;
   color: rgb(149, 222, 241);
-  margin-top: 50px;
+  margin-top: 0;
   margin-left: 5px;
+  margin-bottom: 10px;
+}
+#your-score > p {
+  font-family: "zombie";
+  font-size: 4rem;
+  color: rgb(255, 93, 75);
+  display: flex;
+  justify-items: center;
+  margin-block: 20px;
+}
+#hiScorePoint {
+  font-family: "zombie";
+  font-size: 2rem;
+  color: rgb(149, 222, 241);
+  margin-top: 5px;
+  margin-left: 5px;
+}
+#restart-game-btn,
+#return-game-btn {
+  margin-top: 80px;
 }
 #game-screen,
 #game-over-screen {
@@ -151,7 +197,8 @@ body {
 } */
 #start-btn:hover,
 #hiScore-btn:hover,
-#restart-game-btn:hover {
+#restart-game-btn:hover,
+#return-game-btn:hover {
   transition-delay: 0s, 1s;
   color: #fff;
   box-shadow: 0 0 10px #0ef, 0 0 20px #0ef, 0 0 40px #0ef, 0 0 80px #0ef,
@@ -159,7 +206,8 @@ body {
 }
 #start-btn::before,
 #hiScore-btn::before,
-#restart-game-btn::before {
+#restart-game-btn::before,
+#return-game-btn::before {
   content: "";
   position: absolute;
   top: 0;
@@ -173,6 +221,7 @@ body {
 }
 #start-btn:hover:before,
 #hiScore-btn:hover:before,
-#restart-game-btn:hover:before {
+#restart-game-btn:hover:before,
+#return-game-btn:hover:before {
   width: 100%;
 }
