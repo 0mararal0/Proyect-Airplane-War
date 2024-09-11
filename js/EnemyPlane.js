@@ -9,7 +9,7 @@ class EnemyPlane {
 
     //Enemigo en el DOM
     this.node = document.createElement("img");
-    this.node.src = "./images/enemy.jpg";
+    this.node.src = "./images/plane-enemy1.png";
     gameBoxNode.append(this.node);
 
     //dimensiones

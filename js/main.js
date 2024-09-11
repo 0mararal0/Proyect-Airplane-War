@@ -37,7 +37,10 @@ const textTypewriter = (text = "", time = 200) => {
     }
   }, time);
 };
-// console.log(textTypewriter("lorewknfep dopen poedn", 300));
+textTypewriter(
+  "Desde tiempos inmemoriables, los habitantes de Aetheria estan en guerra, tu mision es acabar con los enemigos y restaurar de nuevo la paz. Suerte!",
+  120
+);
 
 //Función principal
 function startGame() {

@@ -9,8 +9,7 @@ class PlayerPlane {
 
     //Avion en el DOM
     this.node = document.createElement("img");
-    this.node.src =
-      "./images/pngtree-red-red-plane-small-plane-cartoon-airplane-png-image_450710.jpg";
+    this.node.src = "./images/plane-ppal.png";
     gameBoxNode.append(this.node);
 
     //dimensiones
