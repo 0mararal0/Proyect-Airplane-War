@@ -12,7 +12,8 @@ body {
   height: 90dvh;
 }
 #start-screen,
-#game-screen {
+#game-screen,
+#game-over-screen {
   background-image: url(../images/photo-1475274047050-1d0c0975c63e.jpg);
   background-position: center;
   background-size: cover;
@@ -23,7 +24,8 @@ body {
   padding-block: 50px;
   height: 100%;
 }
-.start-screen-ppal {
+.start-screen-ppal,
+#hiScoreList {
   border: 1px solid rgb(149, 222, 241);
   border-radius: 50px;
   box-shadow: 0px 0px 50px rgb(149, 222, 241);
@@ -34,7 +36,8 @@ body {
   align-items: center;
 }
 
-.start-screen-ppal > h1 {
+.start-screen-ppal > h1,
+#game-over-screen > h3 {
   font-family: "mangat";
   font-size: 5rem;
   font-weight: bold;
@@ -67,7 +70,8 @@ body {
   margin-bottom: 50px;
 }
 #start-btn,
-#hiScore-btn {
+#hiScore-btn,
+#restart-game-btn {
   font-family: "zombie";
 
   background-color: transparent;
@@ -86,13 +90,13 @@ body {
   overflow: hidden;
   transition: color 1s, box-shadow 1s;
 }
-#restart-game-btn {
+/* #restart-game-btn {
   font-family: "zombie";
   font-size: 2rem;
   background-color: brown;
   padding: 15px 40px;
   border-radius: 50px;
-}
+} */
 #game-box {
   background-image: url(../images/bg-game-screen.jpg);
   background-position: center;
@@ -110,22 +114,52 @@ body {
 #game-box * {
   pointer-events: none;
 }
+#marker {
+  display: flex;
+  color: aliceblue;
+  border: 2px solid rgb(149, 222, 241);
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  box-shadow: 0px 0px 50px rgb(149, 222, 241);
+  justify-content: end;
+  width: 900px;
+}
+#game-over-screen > h3 {
+  font-family: "mangat";
+}
+#hiScoreList {
+  width: 900px;
+  height: 600px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+#hiScoreList > h4 {
+  font-family: "zombie";
+  font-size: 4rem;
+  color: rgb(149, 222, 241);
+  margin-top: 50px;
+  margin-left: 5px;
+}
 #game-screen,
 #game-over-screen {
   display: none;
 }
-#marker {
-  display: flex;
-}
+/* #marker {
+} */
 #start-btn:hover,
-#hiScore-btn:hover {
+#hiScore-btn:hover,
+#restart-game-btn:hover {
   transition-delay: 0s, 1s;
   color: #fff;
   box-shadow: 0 0 10px #0ef, 0 0 20px #0ef, 0 0 40px #0ef, 0 0 80px #0ef,
     0 0 160px #0ef;
 }
 #start-btn::before,
-#hiScore-btn::before {
+#hiScore-btn::before,
+#restart-game-btn::before {
   content: "";
   position: absolute;
   top: 0;
@@ -138,6 +172,7 @@ body {
   transition: 1s;
 }
 #start-btn:hover:before,
-#hiScore-btn:hover:before {
+#hiScore-btn:hover:before,
+#restart-game-btn:hover:before {
   width: 100%;
 }
