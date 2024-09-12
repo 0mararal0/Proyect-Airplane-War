@@ -143,13 +143,17 @@ body {
   animation: finalTime 0.5s infinite;
 }
 .score,
-.time {
+.time,
+.level {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
   margin-inline: 50px;
 }
 .score > p,
-.time > p {
+.time > p,
+.level > p {
   font-family: "zombie";
   font-size: 3rem;
   margin-block: 0px;

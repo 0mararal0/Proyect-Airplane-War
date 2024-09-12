@@ -22,5 +22,6 @@ class EnemyPlane {
   automaticMovement() {
     this.x = this.x - this.speed;
     this.node.style.left = `${this.x}px`;
+    gameBoxNode.append(this.node);
   }
 }

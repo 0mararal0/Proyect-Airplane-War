@@ -27,11 +27,13 @@ let fireW = 40;
 let positionPlayerX = 50;
 let positionPlayerY = 300;
 let enemyPlaneArr = [];
-let hiScore = "0000";
+
+let level = 1;
 let local = JSON.parse(localStorage.getItem("HiScore"));
+let hiScore = "0000";
 let hiScoreArr = local ? local : [];
 let resulthiScore = [];
-let timeRemaining = 3;
+let timeRemaining = 60;
 const typewriter = document.getElementById("typewriter");
 
 /* ··········Funciones globales del juego·········· */
@@ -119,15 +121,20 @@ function startGame() {
   enemyPlaneIntervalId = setInterval(() => {
     addEnemyPlane();
   }, 1000);
+  enemySpeedPlaneIntervalId = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 60);
 }
 //función bucle
 function gameLoop() {
   fireArr.forEach((elem) => {
     elem.fire();
   });
-  enemyPlaneArr.forEach((elem) => {
+  /* enemyPlaneArr.forEach((elem) => {
     elem.automaticMovement();
-  });
+  }); */
   outFire();
   outEnemyPlane();
   detectFire();
@@ -190,6 +197,72 @@ function detectFire() {
     hiScore = parseInt(hiScore) + 50;
     const hiScoreValue = document.getElementById("hiScoreValue");
     hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
+
+    //aumentamos level
+    if (
+      hiScore === 1000 ||
+      hiScore === 2000 ||
+      hiScore === 3000 ||
+      hiScore === 4000 ||
+      hiScore === 5000 ||
+      hiScore === 6000 ||
+      hiScore === 7000 ||
+      hiScore === 8000 ||
+      hiScore === 9000
+    ) {
+      levelUp();
+    }
+  }
+}
+//mostramos el level actual
+const showLevel = document.getElementById("level");
+showLevel.textContent = level;
+//subimos dificultad por cada level
+function levelUp() {
+  //nivel 1
+  if (hiScore === 1000) {
+    clearInterval(enemyPlaneIntervalId);
+    enemyPlaneIntervalIdLevel2 = setInterval(() => {
+      addEnemyPlane();
+    }, 850);
+    level++;
+    showLevel.textContent = level;
+  }
+  if (hiScore === 2000) {
+    clearInterval(enemyPlaneIntervalIdLevel2);
+    clearInterval(enemySpeedPlaneIntervalId);
+    enemyPlaneIntervalIdLevel3 = setInterval(() => {
+      addEnemyPlane();
+    }, 700);
+    enemySpeedPlaneIntervalIdLevel3 = setInterval(() => {
+      enemyPlaneArr.forEach((elem) => {
+        elem.automaticMovement();
+      });
+    }, 1000 / 120);
+    level++;
+    showLevel.textContent = level;
+  }
+  if (hiScore === 3000) {
+    clearInterval(enemyPlaneIntervalIdLevel3);
+    clearInterval(enemySpeedPlaneIntervalIdLevel3);
+    enemyPlaneIntervalIdLevel4 = setInterval(() => {
+      addEnemyPlane();
+    }, 550);
+    enemySpeedPlaneIntervalIdLevel4 = setInterval(() => {
+      enemyPlaneArr.forEach((elem) => {
+        elem.automaticMovement();
+      });
+    }, 1000 / 180);
+    level++;
+    showLevel.textContent = level;
+  }
+  if (hiScore === 4000) {
+    clearInterval(enemyPlaneIntervalIdLevel3);
+    enemyPlaneIntervalIdLevel4 = setInterval(() => {
+      addEnemyPlane();
+    }, 400);
+    level++;
+    showLevel.textContent = level;
   }
 }
 // detectamos colision player-enemy guardamos hi score eliminamos temporizador
