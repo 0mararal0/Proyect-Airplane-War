@@ -17,6 +17,7 @@ const returnGameNode = document.querySelector("#return-game-btn");
 /* ··········Variables globales del juego·········· */
 //declaramos player-declaramos disparo-parametros comunes
 let player = null;
+let keyPressed = {};
 let firePlayer = null;
 let fireArr = [];
 let playerH = 40;
@@ -30,7 +31,7 @@ let hiScore = "0000";
 let local = JSON.parse(localStorage.getItem("HiScore"));
 let hiScoreArr = local ? local : [];
 let resulthiScore = [];
-let timeRemaining = 30;
+let timeRemaining = 3;
 const typewriter = document.getElementById("typewriter");
 
 /* ··········Funciones globales del juego·········· */
@@ -51,7 +52,27 @@ textTypewriter(
   "Desde tiempos inmemorables, los habitantes de Aetheria estan en guerra, tu mision es acabar con los enemigos y restaurar de nuevo la paz. Suerte!",
   120
 );
-
+//movimiento fluido player
+function movePlayer() {
+  window.addEventListener("keydown", (event) => {
+    keyPressed[event.key] = true;
+  });
+  window.addEventListener("keyup", (event) => {
+    keyPressed[event.key] = false;
+  });
+  if (keyPressed["ArrowUp"]) {
+    player.planeMovement("up");
+  }
+  if (keyPressed["ArrowDown"]) {
+    player.planeMovement("down");
+  }
+  if (keyPressed["ArrowRight"]) {
+    player.planeMovement("right");
+  }
+  if (keyPressed["ArrowLeft"]) {
+    player.planeMovement("left");
+  }
+}
 //Función principal
 function startGame() {
   //actualizar pantallas
@@ -73,31 +94,32 @@ function startGame() {
   //mostramos en el DOM
   const timeRemainingContainer = document.getElementById("timeRemaining");
   timeRemainingContainer.innerText = `${minutes}:${seconds}`;
-  //generamos el intervalo
+  //generamos duración del juego
   let timerId = setInterval(() => {
     timeRemaining--;
     const minutes = Math.floor(timeRemaining / 60)
       .toString()
       .padStart(2, "0");
     const seconds = (timeRemaining % 60).toString().padStart(2, "0");
+    if (timeRemaining <= 5) {
+      // timeRemainingContainer.style.color = "red";
+      timeRemainingContainer.className = "finalTime";
+    }
     timeRemainingContainer.innerText = `${minutes}:${seconds}`;
-
-    //console.log(quiz.timeRemaining)
     if (timeRemaining === 0) {
       clearInterval(timerId);
       gameOver();
     }
   }, 1000);
-
   //iniciar Intervalo de juego
   gameIntervalId = setInterval(() => {
     gameLoop();
   }, Math.round(1000 / 60));
+  //iniciamos intervalo de aviones enemigos
   enemyPlaneIntervalId = setInterval(() => {
     addEnemyPlane();
   }, 1000);
 }
-
 //función bucle
 function gameLoop() {
   fireArr.forEach((elem) => {
@@ -110,15 +132,14 @@ function gameLoop() {
   outEnemyPlane();
   detectFire();
   detectCollisionPlayer();
+  movePlayer();
 }
-
 //añadimos disparos
 function addFire() {
   firePlayer = new FirePlayer(fireH, fireW, playerW);
   fireArr.push(firePlayer);
 }
-
-// eliminamos disparos en Dom y en js
+// eliminamos salida de disparos en Dom y en js
 function outFire() {
   if (fireArr.length === 0) {
     return;
@@ -128,15 +149,13 @@ function outFire() {
     fireArr.splice(0, 1);
   }
 }
-
 //añadimos aviones enemigos
 function addEnemyPlane() {
   let randomPositionY = Math.floor(Math.random() * 600);
   let newPlane = new EnemyPlane(randomPositionY);
   enemyPlaneArr.push(newPlane);
 }
-
-//eliminamos aviones enemigos en DOM y en js
+//eliminamos salida de aviones enemigos en DOM y en js
 function outEnemyPlane() {
   if (enemyPlaneArr.length === 0) {
     return;
@@ -146,8 +165,7 @@ function outEnemyPlane() {
     enemyPlaneArr.splice(0, 1);
   }
 }
-
-//detectamos disparos en avones enemigos y los borramos del DOM
+//detectamos disparos en avones enemigos y los borramos del DOM, añadimos puntuacion al score
 function detectFire() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
     fireArr.forEach((fire, indexFire) => {
@@ -166,7 +184,6 @@ function detectFire() {
     });
   });
   //añadimos puntuacion al contador por cada avion enemigo eliminado
-
   const hiScoreValue = document.getElementById("hiScoreValue");
   hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
   function count() {
@@ -175,7 +192,7 @@ function detectFire() {
     hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
   }
 }
-
+// detectamos colision player-enemy guardamos hi score eliminamos temporizador
 function detectCollisionPlayer() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
     if (
@@ -187,14 +204,14 @@ function detectCollisionPlayer() {
       enemyPlaneArr[indexEnemyPlane].node.remove();
       enemyPlaneArr.splice(indexEnemyPlane, 1);
       hiScoreArr.push(hiScore);
-      showHiScore();
       gameOver();
+      timeRemaining = 0;
     }
   });
 }
-
-//fin del juego reiniciamos pantallas
+//fin del juego reiniciamos pantallas  y mostramos puntuación
 function gameOver() {
+  showHiScore();
   clearInterval(gameIntervalId);
   clearInterval(enemyPlaneIntervalId);
   gameOverScreenNode.style.display = "flex";
@@ -219,7 +236,6 @@ function showHiScore() {
       return 0;
     }
   });
-
   hiScoreArr.splice(5, 1);
   console.log(hiScoreArr);
   hiScoreArr.forEach((elem, index) => {
@@ -231,6 +247,7 @@ function showHiScore() {
   });
   saveLocalStorage();
 }
+//mostramos historial de puntuacion
 function viewHiScore() {
   showHiScore();
   startScreenNode.style.display = "none";
@@ -249,12 +266,6 @@ restartGameNode.addEventListener("click", () => {
   location.reload();
 });
 window.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowUp") {
-    player.up();
-  }
-  if (event.key === "ArrowDown") {
-    player.down();
-  }
   if (event.code === "Space") {
     addFire();
   }

@@ -138,6 +138,10 @@ body {
 #timeRemaining p {
   margin: 0;
 }
+.finalTime {
+  color: red;
+  animation: finalTime 0.5s infinite;
+}
 .score,
 .time {
   display: flex;
@@ -224,4 +228,19 @@ body {
 #restart-game-btn:hover:before,
 #return-game-btn:hover:before {
   width: 100%;
+}
+#textGameOver {
+  animation: neonEfect 2s infinite;
+}
+@keyframes neonEfect {
+  50% {
+    text-shadow: 0 0 10px rgb(157, 94, 228), 0 0 20px rgb(157, 94, 228),
+      0 0 30px rgb(157, 94, 228);
+  }
+}
+@keyframes finalTime {
+  50% {
+    text-shadow: 0 0 10px rgb(253, 91, 91), 0 0 20px rgb(253, 91, 91),
+      0 0 30px rgb(253, 91, 91);
+  }
 }
