@@ -6,12 +6,10 @@ class FirePlayer {
     this.h = fireH;
     this.w = fireW;
     this.speedFire = 10;
-
-    //Avion en el DOM
+    //disparo en el DOM
     this.node = document.createElement("img");
     this.node.src = "./images/disparo.png";
     gameBoxNode.append(this.node);
-
     //dimensiones
     this.node.style.width = `${this.w}px`;
     this.node.style.height = `${this.h}px`;
@@ -19,7 +17,6 @@ class FirePlayer {
     this.node.style.left = `${this.x}px`;
     this.node.style.position = "absolute";
   }
-
   fire() {
     this.x += this.speedFire;
     this.node.style.left = `${this.x}px`;

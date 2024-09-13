@@ -18,7 +18,6 @@ const restartGameNode = document.querySelector("#restart-game-btn");
 const returnGameNode = document.querySelector("#return-game-btn");
 
 /* ··········Variables globales del juego·········· */
-//declaramos player-declaramos disparo-parametros comunes
 let player = null;
 let keyPressed = {};
 let firePlayer = null;
@@ -96,15 +95,13 @@ function startGame() {
   level1();
 
   //añadir temporizador
-  //pasamos a minutes
   const minutes = Math.floor(timeRemaining / 60)
     .toString()
     .padStart(2, "0");
-  //pasamos a segundos
   const seconds = (timeRemaining % 60).toString().padStart(2, "0");
-  //mostramos en el DOM
   const timeRemainingContainer = document.getElementById("timeRemaining");
   timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+
   //generamos duración del juego
   let timerId = setInterval(() => {
     timeRemaining--;
@@ -113,7 +110,6 @@ function startGame() {
       .padStart(2, "0");
     const seconds = (timeRemaining % 60).toString().padStart(2, "0");
     if (timeRemaining <= 5) {
-      // timeRemainingContainer.style.color = "red";
       timeRemainingContainer.className = "finalTime";
     }
     timeRemainingContainer.innerText = `${minutes}:${seconds}`;
@@ -123,11 +119,11 @@ function startGame() {
       gameOver();
     }
   }, 1000);
+
   //iniciar Intervalo de juego
   gameIntervalId = setInterval(() => {
     gameLoop();
   }, Math.round(1000 / 60));
-  //iniciamos intervalo de aviones enemigos
 }
 //función bucle
 function gameLoop() {
@@ -164,7 +160,7 @@ function outFire() {
 }
 //creamos y añadimos aviones enemigos
 function addEnemyPlane() {
-  let randomPositionY = Math.floor(Math.random() * 600);
+  let randomPositionY = Math.floor(Math.random() * 560);
   let newPlane = new EnemyPlane(randomPositionY);
   enemyPlaneArr.push(newPlane);
 }
@@ -210,7 +206,6 @@ function outFuel() {
     fuelArr.splice(0, 1);
   }
 }
-
 //detectamos disparos en avones enemigos y los borramos del DOM, añadimos puntuacion al score
 function detectFire() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
@@ -232,7 +227,7 @@ function detectFire() {
     });
   });
 }
-//colision avion enemigo
+//detectamos colision avion enemigo
 function detectCollisionPlayer() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
     if (
@@ -249,7 +244,7 @@ function detectCollisionPlayer() {
     }
   });
 }
-//colision bola de fuego
+//detectamos colision bola de fuego
 function detectCollisionFireBall() {
   fireBallArr.forEach((fireBall, indexFireBall) => {
     if (
@@ -266,8 +261,8 @@ function detectCollisionFireBall() {
     }
   });
 }
+//detectamos colision fuel
 function detectCollisionFuel() {
-  //colision fuel
   fuelArr.forEach((fuel, indexFuel) => {
     if (
       player.x < fuel.x + fuel.w &&
@@ -451,49 +446,24 @@ function gameOver() {
   gameScreenNode.style.display = "none";
   gameBoxNode.style.display = "none";
 }
-/* function clearAllInterval() {
-  clearInterval(timerId);
-  clearInterval(gameIntervalId);
-  clearInterval(fuelIntervalIdLevel1);
-  clearInterval(fuelSpeedIntervalIdLevel1);
-  clearInterval(enemyPlaneIntervalIdLevel1);
-  clearInterval(enemyPlaneIntervalIdLevel2);
-  clearInterval(enemyPlaneIntervalIdLevel3);
-  clearInterval(enemyPlaneIntervalIdLevel4);
-  clearInterval(enemyPlaneIntervalIdLevel5);
-  clearInterval(enemyPlaneIntervalIdLevel6);
-  clearInterval(enemySpeedPlaneIntervalIdLevel1);
-  clearInterval(enemySpeedPlaneIntervalIdLevel2);
-  clearInterval(enemySpeedPlaneIntervalIdLevel3);
-  clearInterval(enemySpeedPlaneIntervalIdLevel4);
-  clearInterval(enemySpeedPlaneIntervalIdLevel5);
-  clearInterval(enemySpeedPlaneIntervalIdLevel6);
-  clearInterval(fireBallSpeedIntervalIdLevel2);
-  clearInterval(fireBallSpeedIntervalIdLevel3);
-  clearInterval(fireBallSpeedIntervalIdLevel4);
-  clearInterval(fireBallSpeedIntervalIdLevel5);
-  clearInterval(fireBallSpeedIntervalIdLevel6);
-  clearInterval(fireBallSpeedIntervalIdLevel2);
-  clearInterval(fireBallSpeedIntervalIdLevel3);
-  clearInterval(fireBallSpeedIntervalIdLevel4);
-  clearInterval(fireBallSpeedIntervalIdLevel5);
-  clearInterval(fireBallSpeedIntervalIdLevel6);
-} */
 //guardamos la puntuacion en el local storage
 function saveLocalStorage() {
   localStorage.setItem("HiScore", JSON.stringify(hiScoreArr));
 }
+//añadimos HiScore al array
 function addHiScoreArr() {
   hiScoreArr.push(hiScore);
 }
+//incrementamos hiScore
 function addHiScore() {
   hiScore = parseInt(hiScore) + 50;
 }
+//mostramos hiScore en el marcador
 function showmarkerHiScore() {
   const hiScoreValue = document.getElementById("hiScoreValue");
   hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
 }
-// mostramos los resultados en pantalla
+// mostramos los resultados en historial pantalla
 function showHiScore() {
   let yourScoreNode = document.createElement("p");
   yourScoreNode.innerHTML = `YOUR SCORE: ${hiScore}`;
@@ -518,7 +488,7 @@ function showHiScore() {
   });
   saveLocalStorage();
 }
-//mostramos historial de puntuacion cambia de vistas
+//cambiamos vistas para mostrar HiScore
 function viewHiScore() {
   showHiScore();
   startScreenNode.style.display = "none";
@@ -527,6 +497,7 @@ function viewHiScore() {
   gameOverScreenNode.style.display = "flex";
   returnGameNode.style.display = "flex";
 }
+//cambiamos vistas para mostrar controls
 function viewControls() {
   startScreenNode.style.display = "none";
   controlsScreenNode.style.display = "flex";

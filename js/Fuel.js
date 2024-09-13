@@ -6,12 +6,10 @@ class Fuel {
     this.h = 40;
     this.w = 50;
     this.speed = 5;
-
-    //Enemigo en el DOM
+    //Fuel en el DOM
     this.node = document.createElement("img");
     this.node.src = "./images/fuel.gif";
     gameBoxNode.append(this.node);
-
     //dimensiones
     this.node.style.width = `${this.w}px`;
     this.node.style.height = `${this.h}px`;

@@ -7,12 +7,10 @@ class PlayerPlane {
     this.w = playerW;
     this.speedy = 5;
     this.speedx = 5;
-
     //Avion en el DOM
     this.node = document.createElement("img");
     this.node.src = "./images/plane-ppal.png";
     gameBoxNode.append(this.node);
-
     //dimensiones
     this.node.style.width = `${this.w}px`;
     this.node.style.height = `${this.h}px`;
@@ -20,10 +18,7 @@ class PlayerPlane {
     this.node.style.left = `${this.x}px`;
     this.node.style.position = "absolute";
   }
-
   planeMovement(direction) {
-    /* const gameBoxWidth = gameBoxNode.offsetWidth - this.w;
-    const gameBoxHeight = gameBoxNode.offsetHeight - this.h; */
     if (direction === "right") {
       if (this.x >= 800 - this.w) {
         return;
