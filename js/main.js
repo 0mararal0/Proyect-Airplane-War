@@ -5,12 +5,15 @@ const gameScreenNode = document.querySelector("#game-screen");
 const gameOverScreenNode = document.querySelector("#game-over-screen");
 const gameBoxNode = document.querySelector("#game-box");
 const textGameOverNode = document.querySelector("#textGameOver");
+const controlsScreenNode = document.querySelector("#controls-Screen");
 const hiScoreListNode = document.querySelector("#hiScoreList");
 const hiScorePoint = document.querySelector("#hiScorePoint");
 const yourScore = document.querySelector("#your-score");
 //botones
 const startBtnNode = document.querySelector("#start-btn");
 const hiScoreBtnNode = document.querySelector("#hiScore-btn");
+const controlsNode = document.querySelector("#controls-btn");
+const returnControlsNode = document.querySelector("#returnControl-btn");
 const restartGameNode = document.querySelector("#restart-game-btn");
 const returnGameNode = document.querySelector("#return-game-btn");
 
@@ -27,13 +30,15 @@ let fireW = 40;
 let positionPlayerX = 50;
 let positionPlayerY = 300;
 let enemyPlaneArr = [];
-
-let level = 1;
+let fireBallArr = [];
+let fuelArr = [];
+let level = 0;
+const showLevel = document.getElementById("level");
 let local = JSON.parse(localStorage.getItem("HiScore"));
 let hiScore = "0000";
 let hiScoreArr = local ? local : [];
 let resulthiScore = [];
-let timeRemaining = 60;
+let timeRemaining = 30;
 const typewriter = document.getElementById("typewriter");
 
 /* ··········Funciones globales del juego·········· */
@@ -82,9 +87,13 @@ function startGame() {
   gameScreenNode.style.display = "flex";
   gameOverScreenNode.style.display = "none";
   returnGameNode.style.display = "none";
+  controlsScreenNode.style.display = "none";
 
   // añadir elementos al juego
   player = new PlayerPlane(positionPlayerX, positionPlayerY, playerH, playerW);
+
+  //añadimos primer nivel
+  level1();
 
   //añadir temporizador
   //pasamos a minutes
@@ -110,6 +119,7 @@ function startGame() {
     timeRemainingContainer.innerText = `${minutes}:${seconds}`;
     if (timeRemaining === 0) {
       clearInterval(timerId);
+      hiScoreArr.push(hiScore);
       gameOver();
     }
   }, 1000);
@@ -118,33 +128,29 @@ function startGame() {
     gameLoop();
   }, Math.round(1000 / 60));
   //iniciamos intervalo de aviones enemigos
-  enemyPlaneIntervalId = setInterval(() => {
-    addEnemyPlane();
-  }, 1000);
-  enemySpeedPlaneIntervalId = setInterval(() => {
-    enemyPlaneArr.forEach((elem) => {
-      elem.automaticMovement();
-    });
-  }, 1000 / 60);
 }
 //función bucle
 function gameLoop() {
-  fireArr.forEach((elem) => {
-    elem.fire();
-  });
-  /* enemyPlaneArr.forEach((elem) => {
-    elem.automaticMovement();
-  }); */
+  movePlayer();
+  movementFire();
   outFire();
   outEnemyPlane();
+  outFireBall();
   detectFire();
   detectCollisionPlayer();
-  movePlayer();
+  detectCollisionFireBall();
+  detectCollisionFuel();
 }
 //añadimos disparos
 function addFire() {
   firePlayer = new FirePlayer(fireH, fireW, playerW);
   fireArr.push(firePlayer);
+}
+//damos movimiento al disparo
+function movementFire() {
+  fireArr.forEach((elem) => {
+    elem.fire();
+  });
 }
 // eliminamos salida de disparos en Dom y en js
 function outFire() {
@@ -156,7 +162,7 @@ function outFire() {
     fireArr.splice(0, 1);
   }
 }
-//añadimos aviones enemigos
+//creamos y añadimos aviones enemigos
 function addEnemyPlane() {
   let randomPositionY = Math.floor(Math.random() * 600);
   let newPlane = new EnemyPlane(randomPositionY);
@@ -172,6 +178,39 @@ function outEnemyPlane() {
     enemyPlaneArr.splice(0, 1);
   }
 }
+//creamos y añadimos bolas de fuego
+function addFireBall() {
+  let randomPositionYFireBall = Math.floor(Math.random() * 600);
+  let newFireBall = new FireBall(randomPositionYFireBall);
+  fireBallArr.push(newFireBall);
+}
+//eliminamos salida de bolas de fuego en DOM y en js
+function outFireBall() {
+  if (fireBallArr.length === 0) {
+    return;
+  }
+  if (fireBallArr[0].x < 0 - fireBallArr[0].w) {
+    fireBallArr[0].node.remove();
+    fireBallArr.splice(0, 1);
+  }
+}
+//creamos y añadimos fuel
+function addFuel() {
+  let randomPositionYFuel = Math.floor(Math.random() * 600);
+  let newFuel = new Fuel(randomPositionYFuel);
+  fuelArr.push(newFuel);
+}
+//eliminamos salida de fuel en DOM y en js
+function outFuel() {
+  if (fuelArr.length === 0) {
+    return;
+  }
+  if (fuelArr[0].x < 0 - fuelArr[0].w) {
+    fuelArr[0].node.remove();
+    fuelArr.splice(0, 1);
+  }
+}
+
 //detectamos disparos en avones enemigos y los borramos del DOM, añadimos puntuacion al score
 function detectFire() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
@@ -186,86 +225,14 @@ function detectFire() {
         enemyPlaneArr.splice(indexEnemyPlane, 1);
         fireArr[indexFire].node.remove();
         fireArr.splice(indexFire, 1);
-        count();
+        addHiScore();
+        showmarkerHiScore();
+        moveLevel();
       }
     });
   });
-  //añadimos puntuacion al contador por cada avion enemigo eliminado
-  const hiScoreValue = document.getElementById("hiScoreValue");
-  hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
-  function count() {
-    hiScore = parseInt(hiScore) + 50;
-    const hiScoreValue = document.getElementById("hiScoreValue");
-    hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
-
-    //aumentamos level
-    if (
-      hiScore === 1000 ||
-      hiScore === 2000 ||
-      hiScore === 3000 ||
-      hiScore === 4000 ||
-      hiScore === 5000 ||
-      hiScore === 6000 ||
-      hiScore === 7000 ||
-      hiScore === 8000 ||
-      hiScore === 9000
-    ) {
-      levelUp();
-    }
-  }
 }
-//mostramos el level actual
-const showLevel = document.getElementById("level");
-showLevel.textContent = level;
-//subimos dificultad por cada level
-function levelUp() {
-  //nivel 1
-  if (hiScore === 1000) {
-    clearInterval(enemyPlaneIntervalId);
-    enemyPlaneIntervalIdLevel2 = setInterval(() => {
-      addEnemyPlane();
-    }, 850);
-    level++;
-    showLevel.textContent = level;
-  }
-  if (hiScore === 2000) {
-    clearInterval(enemyPlaneIntervalIdLevel2);
-    clearInterval(enemySpeedPlaneIntervalId);
-    enemyPlaneIntervalIdLevel3 = setInterval(() => {
-      addEnemyPlane();
-    }, 700);
-    enemySpeedPlaneIntervalIdLevel3 = setInterval(() => {
-      enemyPlaneArr.forEach((elem) => {
-        elem.automaticMovement();
-      });
-    }, 1000 / 120);
-    level++;
-    showLevel.textContent = level;
-  }
-  if (hiScore === 3000) {
-    clearInterval(enemyPlaneIntervalIdLevel3);
-    clearInterval(enemySpeedPlaneIntervalIdLevel3);
-    enemyPlaneIntervalIdLevel4 = setInterval(() => {
-      addEnemyPlane();
-    }, 550);
-    enemySpeedPlaneIntervalIdLevel4 = setInterval(() => {
-      enemyPlaneArr.forEach((elem) => {
-        elem.automaticMovement();
-      });
-    }, 1000 / 180);
-    level++;
-    showLevel.textContent = level;
-  }
-  if (hiScore === 4000) {
-    clearInterval(enemyPlaneIntervalIdLevel3);
-    enemyPlaneIntervalIdLevel4 = setInterval(() => {
-      addEnemyPlane();
-    }, 400);
-    level++;
-    showLevel.textContent = level;
-  }
-}
-// detectamos colision player-enemy guardamos hi score eliminamos temporizador
+//colision avion enemigo
 function detectCollisionPlayer() {
   enemyPlaneArr.forEach((enemyPlane, indexEnemyPlane) => {
     if (
@@ -276,24 +243,255 @@ function detectCollisionPlayer() {
     ) {
       enemyPlaneArr[indexEnemyPlane].node.remove();
       enemyPlaneArr.splice(indexEnemyPlane, 1);
-      hiScoreArr.push(hiScore);
+      addHiScoreArr();
       gameOver();
       timeRemaining = 0;
     }
   });
 }
+//colision bola de fuego
+function detectCollisionFireBall() {
+  fireBallArr.forEach((fireBall, indexFireBall) => {
+    if (
+      player.x < fireBall.x + fireBall.w &&
+      player.x + player.w > fireBall.x &&
+      player.y < fireBall.y + fireBall.h &&
+      player.y + player.h > fireBall.y
+    ) {
+      fireBallArr[indexFireBall].node.remove();
+      fireBallArr.splice(indexFireBall, 1);
+      addHiScoreArr();
+      gameOver();
+      timeRemaining = 0;
+    }
+  });
+}
+function detectCollisionFuel() {
+  //colision fuel
+  fuelArr.forEach((fuel, indexFuel) => {
+    if (
+      player.x < fuel.x + fuel.w &&
+      player.x + player.w > fuel.x &&
+      player.y < fuel.y + fuel.h &&
+      player.y + player.h > fuel.y
+    ) {
+      fuelArr[indexFuel].node.remove();
+      fuelArr.splice(indexFuel, 1);
+      timeRemaining += 15;
+    }
+  });
+}
+//movemos de nivel
+function moveLevel() {
+  switch (hiScore) {
+    case 1000:
+      level2();
+      break;
+    case 2000:
+      level3();
+      break;
+    case 3000:
+      level4();
+      break;
+    case 4000:
+      level5();
+    case 5000:
+      level6();
+      break;
+  }
+}
+//subimos dificultad por cada level
+function level1() {
+  fuelIntervalIdLevel1 = setInterval(() => {
+    addFuel();
+  }, 10000);
+  fuelSpeedIntervalIdLevel1 = setInterval(() => {
+    fuelArr.forEach((elem) => {
+      elem.automaticMovementFuel();
+    });
+  }, 1000 / 60);
+  enemyPlaneIntervalIdLevel1 = setInterval(() => {
+    addEnemyPlane();
+  }, 1000);
+  enemySpeedPlaneIntervalIdLevel1 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 60);
+  level++;
+  showLevel.textContent = level;
+}
+function level2() {
+  clearInterval(enemyPlaneIntervalIdLevel1);
+  clearInterval(enemySpeedPlaneIntervalIdLevel1);
+  enemyPlaneIntervalIdLevel2 = setInterval(() => {
+    addEnemyPlane();
+  }, 700);
+  enemySpeedPlaneIntervalIdLevel2 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 80);
+  fireballIntervalIdLevel2 = setInterval(() => {
+    addFireBall();
+  }, 4000);
+  fireBallSpeedIntervalIdLevel2 = setInterval(() => {
+    fireBallArr.forEach((elem) => {
+      elem.automaticMovementFireBall();
+    });
+  }, 15);
+  level++;
+  showLevel.textContent = level;
+}
+function level3() {
+  console.log("entro en nivel3");
+  clearInterval(enemySpeedPlaneIntervalIdLevel2);
+  clearInterval(enemyPlaneIntervalIdLevel2);
+  clearInterval(fireballIntervalIdLevel2);
+  clearInterval(fireBallSpeedIntervalIdLevel2);
+  enemyPlaneIntervalIdLevel3 = setInterval(() => {
+    addEnemyPlane();
+  }, 400);
+  enemySpeedPlaneIntervalIdLevel3 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 100);
+  fireballIntervalIdLevel3 = setInterval(() => {
+    addFireBall();
+  }, 2000);
+  fireBallSpeedIntervalIdLevel3 = setInterval(() => {
+    fireBallArr.forEach((elem) => {
+      elem.automaticMovementFireBall();
+    });
+  }, 13);
+  level++;
+  showLevel.textContent = level;
+}
+function level4() {
+  console.log("entro en nivel4");
+  clearInterval(enemySpeedPlaneIntervalIdLevel3);
+  clearInterval(enemyPlaneIntervalIdLevel3);
+  clearInterval(fireballIntervalIdLevel3);
+  clearInterval(fireBallSpeedIntervalIdLevel3);
+  enemyPlaneIntervalIdLevel4 = setInterval(() => {
+    addEnemyPlane();
+  }, 300);
+  enemySpeedPlaneIntervalIdLevel4 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 120);
+  fireballIntervalIdLevel4 = setInterval(() => {
+    addFireBall();
+  }, 800);
+  fireBallSpeedIntervalIdLevel4 = setInterval(() => {
+    fireBallArr.forEach((elem) => {
+      elem.automaticMovementFireBall();
+    });
+  }, 11);
+  level++;
+  showLevel.textContent = level;
+}
+function level5() {
+  console.log("entro en nivel5");
+  clearInterval(enemySpeedPlaneIntervalIdLevel4);
+  clearInterval(enemyPlaneIntervalIdLevel4);
+  clearInterval(fireballIntervalIdLevel4);
+  clearInterval(fireBallSpeedIntervalIdLevel4);
+  enemyPlaneIntervalIdLevel5 = setInterval(() => {
+    addEnemyPlane();
+  }, 150);
+  enemySpeedPlaneIntervalIdLevel5 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 120);
+  fireballIntervalIdLevel5 = setInterval(() => {
+    addFireBall();
+  }, 500);
+  fireBallSpeedIntervalIdLevel5 = setInterval(() => {
+    fireBallArr.forEach((elem) => {
+      elem.automaticMovementFireBall();
+    });
+  }, 9);
+  level++;
+  showLevel.textContent = level;
+}
+function level6() {
+  clearInterval(enemySpeedPlaneIntervalIdLevel5);
+  clearInterval(enemyPlaneIntervalIdLevel5);
+  clearInterval(fireballIntervalIdLevel5);
+  clearInterval(fireBallSpeedIntervalIdLevel5);
+  enemyPlaneIntervalIdLevel6 = setInterval(() => {
+    addEnemyPlane();
+  }, 50);
+  enemySpeedPlaneIntervalIdLevel6 = setInterval(() => {
+    enemyPlaneArr.forEach((elem) => {
+      elem.automaticMovement();
+    });
+  }, 1000 / 120);
+  fireballIntervalIdLevel6 = setInterval(() => {
+    addFireBall();
+  }, 100);
+  fireBallSpeedIntervalIdLevel6 = setInterval(() => {
+    fireBallArr.forEach((elem) => {
+      elem.automaticMovementFireBall();
+    });
+  }, 7);
+  level++;
+  showLevel.textContent = level;
+}
 //fin del juego reiniciamos pantallas  y mostramos puntuación
 function gameOver() {
   showHiScore();
   clearInterval(gameIntervalId);
-  clearInterval(enemyPlaneIntervalId);
+  clearInterval(enemyPlaneIntervalIdLevel1);
   gameOverScreenNode.style.display = "flex";
   gameScreenNode.style.display = "none";
   gameBoxNode.style.display = "none";
 }
+/* function clearAllInterval() {
+  clearInterval(timerId);
+  clearInterval(gameIntervalId);
+  clearInterval(fuelIntervalIdLevel1);
+  clearInterval(fuelSpeedIntervalIdLevel1);
+  clearInterval(enemyPlaneIntervalIdLevel1);
+  clearInterval(enemyPlaneIntervalIdLevel2);
+  clearInterval(enemyPlaneIntervalIdLevel3);
+  clearInterval(enemyPlaneIntervalIdLevel4);
+  clearInterval(enemyPlaneIntervalIdLevel5);
+  clearInterval(enemyPlaneIntervalIdLevel6);
+  clearInterval(enemySpeedPlaneIntervalIdLevel1);
+  clearInterval(enemySpeedPlaneIntervalIdLevel2);
+  clearInterval(enemySpeedPlaneIntervalIdLevel3);
+  clearInterval(enemySpeedPlaneIntervalIdLevel4);
+  clearInterval(enemySpeedPlaneIntervalIdLevel5);
+  clearInterval(enemySpeedPlaneIntervalIdLevel6);
+  clearInterval(fireBallSpeedIntervalIdLevel2);
+  clearInterval(fireBallSpeedIntervalIdLevel3);
+  clearInterval(fireBallSpeedIntervalIdLevel4);
+  clearInterval(fireBallSpeedIntervalIdLevel5);
+  clearInterval(fireBallSpeedIntervalIdLevel6);
+  clearInterval(fireBallSpeedIntervalIdLevel2);
+  clearInterval(fireBallSpeedIntervalIdLevel3);
+  clearInterval(fireBallSpeedIntervalIdLevel4);
+  clearInterval(fireBallSpeedIntervalIdLevel5);
+  clearInterval(fireBallSpeedIntervalIdLevel6);
+} */
 //guardamos la puntuacion en el local storage
 function saveLocalStorage() {
   localStorage.setItem("HiScore", JSON.stringify(hiScoreArr));
+}
+function addHiScoreArr() {
+  hiScoreArr.push(hiScore);
+}
+function addHiScore() {
+  hiScore = parseInt(hiScore) + 50;
+}
+function showmarkerHiScore() {
+  const hiScoreValue = document.getElementById("hiScoreValue");
+  hiScoreValue.textContent = hiScore.toString().padStart(4, "0");
 }
 // mostramos los resultados en pantalla
 function showHiScore() {
@@ -320,7 +518,7 @@ function showHiScore() {
   });
   saveLocalStorage();
 }
-//mostramos historial de puntuacion
+//mostramos historial de puntuacion cambia de vistas
 function viewHiScore() {
   showHiScore();
   startScreenNode.style.display = "none";
@@ -329,9 +527,17 @@ function viewHiScore() {
   gameOverScreenNode.style.display = "flex";
   returnGameNode.style.display = "flex";
 }
+function viewControls() {
+  startScreenNode.style.display = "none";
+  controlsScreenNode.style.display = "flex";
+}
 /* ··········Event Listeners·········· */
 startBtnNode.addEventListener("click", startGame);
 hiScoreBtnNode.addEventListener("click", viewHiScore);
+controlsNode.addEventListener("click", viewControls);
+returnControlsNode.addEventListener("click", () => {
+  location.reload();
+});
 returnGameNode.addEventListener("click", () => {
   location.reload();
 });

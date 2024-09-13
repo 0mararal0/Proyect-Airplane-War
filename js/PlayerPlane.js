@@ -25,7 +25,7 @@ class PlayerPlane {
     /* const gameBoxWidth = gameBoxNode.offsetWidth - this.w;
     const gameBoxHeight = gameBoxNode.offsetHeight - this.h; */
     if (direction === "right") {
-      if (this.x >= 300 - this.w) {
+      if (this.x >= 800 - this.w) {
         return;
       } else {
         this.x = this.x + this.speedx;
@@ -33,7 +33,7 @@ class PlayerPlane {
       }
     }
     if (direction === "left") {
-      if (this.x <= 50) {
+      if (this.x <= 0) {
         return;
       } else {
         this.x = this.x - this.speedx;

@@ -1,15 +1,15 @@
-class EnemyPlane {
-  constructor(randomPositionY) {
+class FireBall {
+  constructor(randomPositionYFireBall) {
     //valores generales
     this.x = 900;
-    this.y = randomPositionY;
+    this.y = randomPositionYFireBall;
     this.h = 40;
     this.w = 50;
     this.speed = 5;
 
     //Enemigo en el DOM
     this.node = document.createElement("img");
-    this.node.src = "./images/plane-enemy1.png";
+    this.node.src = "./images/gif.gif";
     gameBoxNode.append(this.node);
 
     //dimensiones
@@ -19,7 +19,7 @@ class EnemyPlane {
     this.node.style.left = `${this.x}px`;
     this.node.style.position = "absolute";
   }
-  automaticMovement() {
+  automaticMovementFireBall() {
     this.x = this.x - this.speed;
     this.node.style.left = `${this.x}px`;
   }
